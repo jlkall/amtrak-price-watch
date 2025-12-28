@@ -6,8 +6,10 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+  // For local development with SQLite, you can temporarily change provider to "sqlite"
+  // But Vercel requires Postgres (or another hosted database)
 }
 
 // Fixed routes supported by the service

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendAlertConfirmationEmail, sendPriceAlertEmail } from '@/lib/email'
 
+// Force dynamic rendering - this route requires runtime execution
+export const dynamic = 'force-dynamic'
+
 /**
  * Test endpoint for email functionality
  * 

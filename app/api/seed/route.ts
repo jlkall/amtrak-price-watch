@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+// Force dynamic rendering - this route requires runtime execution
+export const dynamic = 'force-dynamic'
+
 // One-time seed endpoint - call this to populate initial data
 // DELETE this route after seeding in production!
 export async function GET() {

@@ -4,6 +4,9 @@ import { sendPriceAlertEmail } from '@/lib/email'
 import { fetchAmtrakFare, clearExpiredCache } from '@/lib/amtrak-fetcher'
 import { getStationCode } from '@/lib/station-codes'
 
+// Force dynamic rendering - this route requires runtime execution
+export const dynamic = 'force-dynamic'
+
 // This endpoint is called by Vercel Cron daily
 // Rate limiting: Once per day per route/date (enforced by cron schedule)
 export async function GET(request: NextRequest) {

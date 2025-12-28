@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+// Force dynamic rendering - this route requires runtime params
+export const dynamic = 'force-dynamic'
+
 // POST: Unsubscribe from an alert
 export async function POST(
   request: NextRequest,

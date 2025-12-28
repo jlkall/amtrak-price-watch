@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+// Force dynamic rendering - these routes require runtime execution
+export const dynamic = 'force-dynamic'
+
 // GET: Fetch routes and holidays for the form (legacy - kept for compatibility)
 export async function GET() {
   try {

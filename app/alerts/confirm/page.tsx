@@ -1,8 +1,9 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
-export default function ConfirmAlertPage() {
+function ConfirmContent() {
   const searchParams = useSearchParams()
   const email = searchParams.get('email')
 
@@ -58,6 +59,18 @@ export default function ConfirmAlertPage() {
         </div>
       </main>
     </div>
+  )
+}
+
+export default function ConfirmAlertPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-gray-600">Loading...</div>
+      </div>
+    }>
+      <ConfirmContent />
+    </Suspense>
   )
 }
 

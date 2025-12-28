@@ -99,7 +99,7 @@ export async function GET(
         <p>You are subscribed to:</p>
         <ul>
           <li><strong>Route:</strong> ${alert.route.label}</li>
-          <li><strong>Holiday:</strong> ${alert.holiday.name}</li>
+          ${alert.holiday ? `<li><strong>Holiday:</strong> ${alert.holiday.name}</li>` : alert.travelDate ? `<li><strong>Travel Date:</strong> ${new Date(alert.travelDate).toLocaleDateString()}</li>` : ''}
           <li><strong>Email:</strong> ${alert.email}</li>
         </ul>
         <form method="POST" style="margin-top: 20px;">

@@ -1,13 +1,12 @@
 import 'dotenv/config'
-import { PrismaClient } from '../lib/generated/prisma/client'
+import { PrismaClient } from '@prisma/client'
 
 // Ensure DATABASE_URL is set
 if (!process.env.DATABASE_URL) {
   process.env.DATABASE_URL = 'file:./dev.db'
 }
 
-// Prisma 7 requires explicit options - try with empty object first
-const prisma = new PrismaClient({})
+const prisma = new PrismaClient()
 
 async function main() {
   console.log('Seeding database...')

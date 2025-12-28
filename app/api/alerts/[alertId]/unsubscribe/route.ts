@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-// Force dynamic rendering - this route requires runtime params
+// Route segment config - prevent static analysis during build
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+export const fetchCache = 'force-no-store'
+export const revalidate = 0
 
 // POST: Unsubscribe from an alert
 export async function POST(

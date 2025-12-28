@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 
 // Route segment config - prevent static analysis during build
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 export const fetchCache = 'force-no-store'
 export const revalidate = 0
+
+// Lazy import Prisma to avoid build-time execution
+const getPrisma = () => import('@/lib/prisma').then(m => m.prisma)
 
 // POST: Unsubscribe from an alert
 export async function POST(
@@ -20,6 +22,7 @@ export async function POST(
     }
 
     // Deactivate the alert
+    const prisma = await getPrisma()
     const alert = await prisma.alert.update({
       where: { id: alertId },
       data: { isActive: false },
@@ -57,6 +60,7 @@ export async function GET(
   const { alertId } = await params
 
   try {
+    const prisma = await getPrisma()
     const alert = await prisma.alert.findUnique({
       where: { id: alertId },
       include: {

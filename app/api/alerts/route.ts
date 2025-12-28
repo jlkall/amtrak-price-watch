@@ -29,6 +29,21 @@ export async function GET() {
 // POST: Create a new alert
 export async function POST(request: NextRequest) {
   try {
+    // Check database connection
+    try {
+      await prisma.$connect()
+    } catch (dbError: any) {
+      console.error('Database connection error:', dbError)
+      return NextResponse.json(
+        { 
+          error: 'Database connection failed',
+          message: 'Please ensure DATABASE_URL is set correctly and the database is accessible.',
+          details: process.env.NODE_ENV === 'development' ? dbError.message : undefined
+        },
+        { status: 500 }
+      )
+    }
+
     const body = await request.json()
     const { email, routeId, holidayId: holidayIdParam, fromLocation, toLocation, travelDate, priceThreshold, preferredTimeStart, preferredTimeEnd } = body
 
@@ -230,6 +245,30 @@ export async function POST(request: NextRequest) {
     )
   } catch (error: any) {
     console.error('Error creating alert:', error)
+    
+    // Handle database connection errors
+    if (error.code === 'P1001' || error.message?.includes('connect') || error.message?.includes('Can\'t reach database')) {
+      return NextResponse.json(
+        { 
+          error: 'Database connection failed',
+          message: 'The database is not accessible. Please ensure DATABASE_URL is set correctly and the database is running.',
+          hint: 'If using Vercel, make sure you have created a Postgres database and set DATABASE_URL in environment variables.'
+        },
+        { status: 500 }
+      )
+    }
+    
+    // Handle Prisma schema errors (tables don't exist)
+    if (error.code === 'P2021' || error.message?.includes('does not exist') || error.message?.includes('relation')) {
+      return NextResponse.json(
+        { 
+          error: 'Database tables not found',
+          message: 'The database tables have not been created yet.',
+          hint: 'Please run database migrations. Visit /api/seed to create the database schema.'
+        },
+        { status: 500 }
+      )
+    }
     
     // Handle Prisma unique constraint errors
     if (error.code === 'P2002') {

@@ -4,10 +4,10 @@ import { prisma } from '@/lib/prisma'
 // POST: Unsubscribe from an alert
 export async function POST(
   request: NextRequest,
-  { params }: { params: { alertId: string } }
+  { params }: { params: Promise<{ alertId: string }> }
 ) {
   try {
-    const { alertId } = params
+    const { alertId } = await params
 
     if (!alertId) {
       return NextResponse.json({ error: 'Alert ID required' }, { status: 400 })
@@ -46,9 +46,9 @@ export async function POST(
 // GET: Show unsubscribe confirmation page
 export async function GET(
   request: NextRequest,
-  { params }: { params: { alertId: string } }
+  { params }: { params: Promise<{ alertId: string }> }
 ) {
-  const { alertId } = params
+  const { alertId } = await params
 
   try {
     const alert = await prisma.alert.findUnique({

@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Quick domain setup helper for trakalerts.com
+
+echo "🌐 trakalerts.com Setup Helper"
+echo ""
+echo "This script will guide you through setting up:"
+echo "  1. Email (Resend domain verification)"
+echo "  2. Website hosting (Vercel)"
+echo ""
+
+# Check if domain is accessible
+echo "📋 Step 1: DNS Records Needed"
+echo ""
+echo "For Resend Email (add these at your domain registrar):"
+echo "  Type: TXT"
+echo "  Name: @"
+echo "  Value: v=spf1 include:_spf.resend.com ~all"
+echo ""
+echo "  Type: TXT"
+echo "  Name: resend._domainkey"
+echo "  Value: (Get from Resend dashboard after adding domain)"
+echo ""
+echo "For Vercel Hosting (add after deploying):"
+echo "  Type: CNAME"
+echo "  Name: @"
+echo "  Value: (Get from Vercel after adding domain)"
+echo ""
+echo "📝 Next Steps:"
+echo "  1. Go to https://resend.com/domains and add trakalerts.com"
+echo "  2. Copy the DNS records Resend provides"
+echo "  3. Add them to your domain registrar's DNS settings"
+echo "  4. Deploy to Vercel and add the domain there"
+echo "  5. Update FROM_EMAIL to alerts@trakalerts.com"
+echo ""
+echo "See scripts/setup-domain.md for detailed instructions"

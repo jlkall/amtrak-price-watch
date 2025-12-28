@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Fixed routes supported by the service
+model Route {
+  id          String          @id @default(cuid())
+  origin      String
+  destination String
+  label       String          // e.g., "NYC → Boston"
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  priceSnapshots PriceSnapshot[]
+  alerts         Alert[]
+
+  @@unique([origin, destination])
+  @@index([origin, destination])
+}
+
+// Fixed holiday periods
+model Holiday {
+  id        String   @id @default(cuid())
+  name      String   // e.g., "Thanksgiving"
+  startDate DateTime // First travel date
+  endDate   DateTime // Last travel date
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  alerts Alert[]
+
+  @@unique([name, startDate])
+  @@index([startDate, endDate])
+}
+
+// Price snapshots from daily scraping
+model PriceSnapshot {
+  id         String   @id @default(cuid())
+  routeId     String
+  travelDate  DateTime // Specific date within holiday window
+  scrapedAt   DateTime @default(now())
+  priceUsd    Float    // Coach class price in USD
+  createdAt   DateTime @default(now())
+
+  route Route @relation(fields: [routeId], references: [id], onDelete: Cascade)
+
+  @@unique([routeId, travelDate, scrapedAt])
+  @@index([routeId, travelDate])
+  @@index([scrapedAt])
+}
+
+// User alert subscriptions
+model Alert {
+  id                String         @id @default(cuid())
+  email             String
+  routeId           String
+  holidayId         String?        // Optional - null for custom dates
+  travelDate        DateTime?      // Specific travel date (for custom dates)
+  priceThreshold    Float          // Alert when price <= this
+  preferredTimeStart String?        // Preferred earliest time (HH:MM format, e.g., "14:00")
+  preferredTimeEnd   String?        // Preferred latest time (HH:MM format, e.g., "20:00")
+  isActive          Boolean        @default(true)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  route   Route   @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  holiday Holiday? @relation(fields: [holidayId], references: [id], onDelete: Cascade)
+  triggers AlertTrigger[]
+
+  @@unique([email, routeId, holidayId, travelDate])
+  @@index([email])
+  @@index([isActive])
+  @@index([travelDate])
+}
+
+// Track when alerts have been triggered (prevent duplicate emails)
+model AlertTrigger {
+  id          String   @id @default(cuid())
+  alertId     String
+  triggeredAt DateTime @default(now())
+  priceUsd    Float    // Price that triggered the alert
+  createdAt   DateTime @default(now())
+
+  alert Alert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+
+  @@index([alertId])
+  @@index([triggeredAt])
+}

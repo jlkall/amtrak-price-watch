@@ -1,0 +1,61 @@
+NAMEcheap Quick Setup for trakalerts.com
+=========================================
+
+STEP 1: EMAIL (Resend)
+----------------------
+1. Go to https://resend.com/domains
+2. Add domain: trakalerts.com
+3. Copy the DNS records Resend shows you
+
+4. In Namecheap:
+   - Domain List → trakalerts.com → Manage
+   - Advanced DNS tab
+   - Add these records:
+
+   Record 1 (SPF):
+   Type: TXT
+   Host: @
+   Value: v=spf1 include:_spf.resend.com ~all
+
+   Record 2 (DKIM):
+   Type: TXT
+   Host: resend._domainkey
+   Value: (copy from Resend dashboard)
+
+   Record 3 (DMARC - optional):
+   Type: TXT
+   Host: _dmarc
+   Value: v=DMARC1; p=none; rua=mailto:dmarc@trakalerts.com
+
+5. Save changes
+6. Wait 10-30 minutes
+7. Check Resend dashboard for verification
+
+STEP 2: HOSTING (Vercel)
+-------------------------
+1. Deploy to Vercel (if not already)
+2. Vercel → Your project → Settings → Domains
+3. Add domain: trakalerts.com
+4. Copy the CNAME value Vercel shows
+
+5. In Namecheap:
+   - Advanced DNS tab
+   - Add this record:
+
+   Record (Vercel):
+   Type: CNAME (or A if CNAME not allowed)
+   Host: @
+   Value: (copy from Vercel)
+
+6. Save changes
+7. Wait 5-30 minutes
+8. Check Vercel dashboard for verification
+
+STEP 3: UPDATE ENV VARS
+------------------------
+In Vercel dashboard:
+- NEXT_PUBLIC_BASE_URL: https://trakalerts.com
+- FROM_EMAIL: alerts@trakalerts.com
+- Redeploy
+
+DONE! 🎉

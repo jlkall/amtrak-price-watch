@@ -39,3 +39,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/app/generated/prisma
+lib/generated/prisma
+lib/amtrak-config.json
+lib/amtrak-discovery-log.json
+
+# database
+*.db
+*.db-journal
+dev.db
+
+# prisma generated
+.prisma/

@@ -1,0 +1,27 @@
+{
+  "discoveredAt": "2025-01-01T00:00:00.000Z",
+  "cookies": [
+    {
+      "name": "example_cookie",
+      "value": "example_value",
+      "domain": ".amtrak.com"
+    }
+  ],
+  "endpoints": [
+    {
+      "url": "https://api.amtrak.com/v1/fares/search",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      "postData": "{\"origin\":\"NYP\",\"destination\":\"BOS\",\"date\":\"2025-12-22\"}"
+    }
+  ],
+  "notes": [
+    "This is an example configuration file",
+    "Run 'npm run discover:amtrak' to generate the actual config",
+    "The actual config will be saved to amtrak-config.json (gitignored)"
+  ]
+}
+

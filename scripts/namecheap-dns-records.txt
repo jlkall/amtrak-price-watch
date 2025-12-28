@@ -1,0 +1,32 @@
+NAMEcheap DNS Records for trakalerts.com
+=========================================
+
+Copy these EXACTLY into Namecheap Advanced DNS:
+
+RECORD 1: SPF (TXT)
+-------------------
+Type: TXT Record
+Host: @
+Value: v=spf1 include:_spf.resend.com ~all
+TTL: Automatic
+
+RECORD 2: DKIM (TXT)
+--------------------
+Type: TXT Record
+Host: default._domainkey
+Value: v=DKIM1;k=rsa;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvipI+wj2GB9nJ9uZ9Hy5ID0/ebqht0QGYM8M1Wfr/AAQE2CMBd33ClYsc70+jnnPlzRdDogjyuucTKeR+4Ax4+w8kKe8mtRddvAwUblOa10RaBcMiK8Z3cj6CsjyhvZcWoGKwamTj7EzYyF0aGzQb1seRQ7at6sqIqNPHyCheNYqzyWahc1zUjlMtcogIuIChK/kFMAiyrUcvz2FUC4KVnUkCHNmrnMYUIdJHDW2iaYm2Scgobtelxihq6P6WWIAZ938hESl8Hb+EfKSvKXiSJtPtFE2C+Lkja6CtXePuheiwr9J+toIKSMtUx6wiMb6QvaNgo8FRZ+Q09ZXR8rsvQIDAQAB
+TTL: Automatic
+
+RECORD 3: DMARC (TXT) - Optional
+---------------------------------
+Type: TXT Record
+Host: _dmarc
+Value: v=DMARC1; p=none; rua=mailto:dmarc@trakalerts.com
+TTL: Automatic
+
+IMPORTANT NOTES:
+- Host "default._domainkey" (NOT "resend._domainkey")
+- Copy the ENTIRE DKIM value (one long line, no spaces)
+- Ignore the "BEGIN/END PUBLIC KEY" text - that's not for DNS
+- Save all changes after adding records
+- Wait 10-30 minutes for verification

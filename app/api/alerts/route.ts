@@ -29,16 +29,59 @@ export async function GET() {
 // POST: Create a new alert
 export async function POST(request: NextRequest) {
   try {
-    // Check database connection
+    // Check database connection and DATABASE_URL
+    if (!process.env.DATABASE_URL) {
+      console.error('DATABASE_URL environment variable is not set')
+      return NextResponse.json(
+        { 
+          error: 'Database configuration missing',
+          message: 'DATABASE_URL environment variable is not set. Please configure it in Vercel Settings → Environment Variables.',
+          hint: 'You need to create a Postgres database (Vercel Postgres or Supabase) and set DATABASE_URL to the connection string.'
+        },
+        { status: 500 }
+      )
+    }
+
+    // Check if DATABASE_URL is still pointing to SQLite (won't work on Vercel)
+    if (process.env.DATABASE_URL.startsWith('file:')) {
+      console.error('DATABASE_URL is set to SQLite file, which does not work on Vercel')
+      return NextResponse.json(
+        { 
+          error: 'Invalid database configuration',
+          message: 'DATABASE_URL is set to a SQLite file, which does not work on Vercel serverless functions.',
+          hint: 'You need to use a Postgres database. Create Vercel Postgres in Storage → Create Database, then update DATABASE_URL with the Postgres connection string.'
+        },
+        { status: 500 }
+      )
+    }
+
+    // Try to connect to database
     try {
       await prisma.$connect()
+      // Test a simple query to ensure database is accessible
+      await prisma.$queryRaw`SELECT 1`
     } catch (dbError: any) {
       console.error('Database connection error:', dbError)
+      const errorCode = dbError.code || 'UNKNOWN'
+      const errorMessage = dbError.message || 'Unknown database error'
+      
       return NextResponse.json(
         { 
           error: 'Database connection failed',
-          message: 'Please ensure DATABASE_URL is set correctly and the database is accessible.',
-          details: process.env.NODE_ENV === 'development' ? dbError.message : undefined
+          message: 'Unable to connect to the database.',
+          details: {
+            errorCode,
+            hint: errorCode === 'P1001' 
+              ? 'Database server is not reachable. Check your DATABASE_URL connection string.'
+              : errorCode === 'P1000' 
+              ? 'Database authentication failed. Check your connection string credentials.'
+              : errorCode === 'P2021'
+              ? 'Database tables do not exist. Visit /api/seed to create them.'
+              : 'Please ensure DATABASE_URL is set correctly and the database is accessible.',
+            connectionStringPreview: process.env.DATABASE_URL 
+              ? `${process.env.DATABASE_URL.substring(0, 20)}...` 
+              : 'Not set'
+          }
         },
         { status: 500 }
       )
